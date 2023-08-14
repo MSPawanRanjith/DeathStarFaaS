@@ -6,8 +6,10 @@ import random
 import names
 import requests
 from random_username.generate import generate_username
+import pytest
 
 openfaas_url = os.environ['OPENFAAS_URL']
+# openfaas_url = "http://34.132.7.177:8080"
 print('OpenFaaS URL: {}'.format(openfaas_url))
 num_users = 10
 usernames = generate_username(num_users)
@@ -20,6 +22,7 @@ user_accounts = [{"username": usernames[i],
 
 ''' Test cases
 '''
+@pytest.yield_fixture(autouse=True, scope='session')
 def test_register_users():
     '''test registering user accounts
     '''
@@ -28,6 +31,7 @@ def test_register_users():
         assert ret.status_code == 200
         payload = json.loads(ret.text)
         assert payload['status'] == 'success'
+
 
 def test_register_duplicate():
     '''test the register-user function prevents creating accounts with the same
@@ -329,6 +333,7 @@ def get_followees(user_id):
             data=req)
     return r
 
+
 def get_user_id(username):
     '''given a username, get its id if exists
     '''
@@ -337,11 +342,13 @@ def get_user_id(username):
             data=req)
     return r
 
+
 def register_user(info):
     '''register a single user account
 
     @param info a dict with user information
     '''
+    print("URL: ", openfaas_url + "/function/register-user", "\nDATA: ", json.dumps(info))
     r = requests.get(openfaas_url + "/function/register-user",
             data=json.dumps(info))
     return r
