@@ -1,4 +1,4 @@
-FROM openfaas/classic-watchdog:0.18.1 as watchdog
+FROM ghcr.io/openfaas/of-watchdog:0.9.11 as watchdog
 
 FROM python:3-alpine
 

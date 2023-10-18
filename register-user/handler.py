@@ -30,7 +30,10 @@ def handle(req):
 
     # Connect to MongoDB deployment on the same K8S cluster.
     # We will be using the `users` db and the `users` collection.
-    client = pymongo.mongo_client.MongoClient('mongodb://mongo-0.mongo.default')
+    try:
+        client = pymongo.mongo_client.MongoClient('mongodb://mongo-0.mongo.default')
+    except Exception as e:
+        return dumps({"status":"error", "msg": e})
     # TODO: Error handling along the way
     db = client.users
     users = db.users
@@ -60,7 +63,7 @@ def handle(req):
 
     # call insertUser function in the social graph service
     req_str = json.dumps({'user_id':new_user_doc['user_id']})
-
+    print("Calling Graphservice with, ", req_str)
     r = requests.get("http://gateway.openfaas:8080/function/social-graph-insert-user",
             data=req_str)
 
