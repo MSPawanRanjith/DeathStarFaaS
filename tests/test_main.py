@@ -54,13 +54,13 @@ def test_get_id():
 
         # payload = json.loads(ret.text)
         # assert payload['status'] == 'success'
-        # assert len(payload['user_id'])==32
+        # assert len(payload['username'])==32
 
         # NOTE: This function changes the states of `user_account`. Subsequent
         # test functions will have access to a `user_id` field for each dict in
         # `user_accounts` list. This can simplify tests that involve user_id's
         # (which there are many).
-        account['user_id'] = payload['user_id']
+        # account['username'] = payload['username']
 
 def test_nonexistent_user_id():
     '''test is given a nonexistent username, get-user-id correctly return error
@@ -76,7 +76,7 @@ def test_get_social_graph_node():
     registration
     '''
     for account in user_accounts:
-        ret = get_followers(account['user_id'])
+        ret = get_followers(account['username'])
         assert ret.status_code ==200
 
         # payload = json.loads(ret.text)
@@ -87,7 +87,7 @@ def test_initial_empty_follower_list():
     is empty
     '''
     for account in user_accounts:
-        ret = get_followers(account['user_id'])
+        ret = get_followers(account['username'])
         assert ret.status_code ==200
 
         # payload = json.loads(ret.text)
@@ -99,7 +99,7 @@ def test_initial_empty_followee_list():
     is empty
     '''
     for account in user_accounts:
-        ret = get_followees(account['user_id'])
+        ret = get_followees(account['username'])
         assert ret.status_code ==200
 
         # payload = json.loads(ret.text)
@@ -111,14 +111,14 @@ def test_follow():
     and the last element follows everyone
     '''
     for i in range(0, len(user_accounts)-1):
-        user_id = user_accounts[i]['user_id']
-        followee_id = user_accounts[i+1]['user_id']
+        user_id = user_accounts[i]['username']
+        followee_id = user_accounts[i+1]['username']
         ret = follow(user_id, followee_id)
         assert ret.status_code == 200
 
     last = user_accounts[len(user_accounts)-1]
     for i in range(0, len(user_accounts)-1):
-        ret = follow(last['user_id'], user_accounts[i]['user_id'])
+        ret = follow(last['username'], user_accounts[i]['username'])
         assert ret.status_code == 200
 
     for i in range(0, len(user_accounts)-1):
@@ -126,35 +126,35 @@ def test_follow():
         followee = user_accounts[i+1]
 
         # check everyone's followees list has the next element
-        ret = get_followees(follower['user_id'])
+        ret = get_followees(follower['username'])
         assert ret.status_code == 200
 
         # payload = json.loads(ret.text)
         # assert payload['status'] == 'success'
         # followees_list = payload['followees']
-        #print('user_id: ' + follower['user_id'] + ", followees: " +
+        #print('user_id: ' + follower['username'] + ", followees: " +
         #        str(followees_list))
-        # assert check_user_id_in_list(followee['user_id'], followees_list) == True
+        # assert check_user_id_in_list(followee['username'], followees_list) == True
 
         # check everyone's followers list has the previous element
-        # ret = get_followers(followee['user_id'])
+        # ret = get_followers(followee['username'])
         # assert ret.status_code == 200
 
         # payload = json.loads(ret.text)
         # assert payload['status'] == 'success'
         # followers_list = payload['followers']
-        # assert check_user_id_in_list(follower['user_id'], followers_list) == True
+        # assert check_user_id_in_list(follower['username'], followers_list) == True
 
         # check everyone has the last element in its followers list
-        #print('last user_id: {}'.format(last['user_id']))
-        #print('user_id: ' + followee['user_id'] + ", followers: " +
+        #print('last user_id: {}'.format(last['username']))
+        #print('user_id: ' + followee['username'] + ", followers: " +
         #        str(followers_list))
         # if followee != last:
-        #     assert check_user_id_in_list(last['user_id'], followers_list) == True
+        #     assert check_user_id_in_list(last['username'], followers_list) == True
 
     # check the last user has everyone in its followees list
     # last = user_accounts[len(user_accounts)-1]
-    # ret = get_followees(last['user_id'])
+    # ret = get_followees(last['username'])
     # assert ret.status_code == 200
 
     # payload = json.loads(ret.text)
@@ -162,12 +162,12 @@ def test_follow():
     # followees_list = payload['followees']
 
     # for i in range(0, len(user_accounts)-1):
-    #     assert check_user_id_in_list(user_accounts[i]['user_id'], followees_list) == True
+    #     assert check_user_id_in_list(user_accounts[i]['username'], followees_list) == True
 
 def test_unfollow():
     for i in range(0, len(user_accounts)-1):
-        follower_id = user_accounts[i]['user_id']
-        followee_id = user_accounts[i+1]['user_id']
+        follower_id = user_accounts[i]['username']
+        followee_id = user_accounts[i+1]['username']
         ret = unfollow(follower_id, followee_id)
         assert ret.status_code == 200
 
@@ -203,24 +203,24 @@ def test_follow_with_username():
     #     followee = user_accounts[i+1]
 
     #     # check everyone's followees list has the next element
-    #     ret = get_followees(follower['user_id'])
+    #     ret = get_followees(follower['username'])
     #     assert ret.status_code == 200
 
     #     payload = json.loads(ret.text)
     #     assert payload['status'] == 'success'
     #     followees_list = payload['followees']
-    #     #print('user_id: ' + follower['user_id'] + ", followees: " +
+    #     #print('user_id: ' + follower['username'] + ", followees: " +
     #     #        str(followees_list))
-    #     assert check_user_id_in_list(followee['user_id'], followees_list) == True
+    #     assert check_user_id_in_list(followee['username'], followees_list) == True
 
     #     # check everyone's followers list has the previous element
-    #     ret = get_followers(followee['user_id'])
+    #     ret = get_followers(followee['username'])
     #     assert ret.status_code == 200
 
     #     payload = json.loads(ret.text)
     #     assert payload['status'] == 'success'
     #     followers_list = payload['followers']
-    #     assert check_user_id_in_list(follower['user_id'], followers_list) == True
+    #     assert check_user_id_in_list(follower['username'], followers_list) == True
 
 
 
@@ -228,8 +228,8 @@ def test_unfollow_with_username():
     for i in range(0, len(user_accounts)-1):
         follower_name = user_accounts[i]['username']
         followee_name = user_accounts[i+1]['username']
-        follower_id = user_accounts[i]['user_id']
-        followee_id = user_accounts[i+1]['user_id']
+        follower_id = user_accounts[i]['username']
+        followee_id = user_accounts[i+1]['username']
         ret = unfollow_with_username(follower_name, followee_name)
         assert ret.status_code == 200
 
@@ -261,7 +261,7 @@ def check_user_id_in_list(user_id, l):
     "xxx", "timestamp":1247089}
     '''
     for e in l:
-        if e['user_id'] == user_id:
+        if e['username'] == user_id:
             return True
 
     return False

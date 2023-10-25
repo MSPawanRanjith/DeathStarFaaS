@@ -19,14 +19,10 @@ spec:
           command: ["mongod", "--bind_ip_all"]
           ports:
             - containerPort: 27017
-          volumeMounts:
-            - name: data
-              mountPath: /data/db
-  volumeClaimTemplates:
-    - metadata:
-        name: data
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: 1Gi
+      #     volumeMounts:
+      #       - name: "mongodb-persistent-storage"
+      #         mountPath: /data/db
+      # volumes:
+      #   - name: "mongodb-persistent-storage"
+      #     persistentVolumeClaim:
+      #       claimName: "mongo-pvc"
